@@ -26,7 +26,7 @@ st.caption("Turn a recording into a summary, action items, decisions, and a chat
 
 with st.sidebar:
     st.header("New Meeting")
-    input_mode = st.radio("Input type", ["YouTube URL", "Upload audio file"])
+    input_mode = st.radio("Input type", ["YouTube URL", "Upload audio or video file"])
 
     source = None
     if input_mode == "YouTube URL":
@@ -34,8 +34,11 @@ with st.sidebar:
         if url.strip():
             source = url.strip()
     else:
+        # ffmpeg (via pydub) pulls the audio track straight out of a video
+        # container -- no separate video path needed, just accept these too.
         uploaded = st.file_uploader(
-            "Upload audio file", type=["mp3", "wav", "m4a", "mp4", "webm", "ogg", "flac"]
+            "Upload audio or video file",
+            type=["mp3", "wav", "m4a", "flac", "ogg", "mp4", "mov", "mkv", "avi", "webm", "m4v"],
         )
         if uploaded is not None:
             os.makedirs(DOWNLOAD_DIR, exist_ok=True)
