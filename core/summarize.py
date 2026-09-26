@@ -1,18 +1,7 @@
-import os
-import time
-
-from langchain_mistralai import ChatMistralAI
+from core.llm import get_llm
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-
-
-def get_llm() -> ChatMistralAI:
-    return ChatMistralAI(
-        model="mistral-small-latest",
-        mistral_api_key=os.getenv("MISTRALAI_API_KEY"),
-        temperature=0.3,
-    )
 
 
 def split_transcript(transcript: str) -> list:
@@ -37,7 +26,6 @@ def summarize(transcript: str) -> str:
     chunk_summaries = []
     for chunk in chunks:
         chunk_summaries.append(map_chain.invoke({"text": chunk}))
-        time.sleep(1)  # basic pacing to respect free-tier rate limits
 
     # Short transcript: one chunk is already a full summary, skip the reduce step
     if len(chunk_summaries) == 1:

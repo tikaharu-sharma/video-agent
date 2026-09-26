@@ -20,7 +20,7 @@ def download_youtube_audio(url :str) ->str:
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=True)
-        filename = ydl.prepare_filename(info).replace('.webm', '.wav').replace('.m4a', '.wav')
+        filename = os.path.splitext(ydl.prepare_filename(info))[0] + '.wav'
     return filename
 
 def convert_to_wav(input_file: str) -> str:
@@ -50,6 +50,8 @@ def process_input(source: str) -> list:
         raw_path = download_youtube_audio(source)
     else:
         print("Detected local audio file. Converting to WAV...")
+        if not os.path.isfile(source):
+            raise FileNotFoundError(f"Audio file not found: {source}")
         raw_path = source
     
     wav_path = convert_to_wav(raw_path)
@@ -58,7 +60,3 @@ def process_input(source: str) -> list:
     chunks = chunk_audio(wav_path)
     print(f"Audio ready - {len(chunks)} chunks created.")
     return chunks
-
-if __name__ == "__main__":
-    chunks = process_input("https://www.youtube.com/watch?v=SzEaBvPcmBw&t=597s")
-    print(chunks)
