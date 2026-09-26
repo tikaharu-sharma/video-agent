@@ -3,3 +3,4 @@ __pycache__/
 downloads/
 .env
 .DS_Store
+vector_db/
